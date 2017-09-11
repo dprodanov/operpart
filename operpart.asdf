@@ -1,0 +1,9 @@
+(defsystem operpart
+  :defsystem-depends-on ("maxima-file")
+  :name "operpart"
+  :author "Dimiter Prodanov"
+  :licence "GNU Lesser General Public License, version 2.1"
+  :description "Handling of expressions"
+
+  :components
+    ((:maxima-file "operpart"))
