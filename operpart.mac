@@ -4,6 +4,11 @@
    usage
    
    [l, r]:oppart(expr, predicate)
+   
+   The idea is based on the pattern matcher in Richard Fateman's paper 
+   "Partitioning of Algebraic Subexpressions in Computer Algebra Systems: Or, Don’t use matching so much.Including a neat integration example"
+   https://people.eecs.berkeley.edu/~fateman/papers/partition-new2.pdf
+   
 
 (C) - Dimiter Prodanov, 2015 - 2017
  
