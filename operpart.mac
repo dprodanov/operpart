@@ -1,16 +1,31 @@
 /**
    Handling of general expressions
    
-   usage
+   main functions
    
    [l, r]:oppart(expr, predicate)
    
-   The idea is based on the pattern matcher in Richard Fateman's paper 
-   "Partitioning of Algebraic Subexpressions in Computer Algebra Systems: Or, Don’t use matching so much.Including a neat integration example"
-   https://people.eecs.berkeley.edu/~fateman/papers/partition-new2.pdf
+   partbyvar(expr, var)
    
+   explodeop(expr, sop)
+   
+   implodeop(lsta, sop)
+   
+   countsymb(ab, sym)
+   
+   fnsort(expr, fn, [dir])
+   
+   auxilliary functions
+   
+   inop(expr)
+   
+   inargs(expr)
+   
+   argsgreatp(uu, vv, fn)
+   
+   argslessp(uu, vv, fn)
 
-(C) - Dimiter Prodanov, 2015 - 2017
+(C) - Dimiter Prodanov, 2015 - 2018
  
 @license This library is free software; you can redistribute it and/or
         modify it under the terms of the GNU Lesser General Public
@@ -34,6 +49,9 @@ inargs(expr):= if not mapatom (expr)  then  substinpart( "[", expr, 0) else 'nil
 /*
 partition by predicate with expression reconstruction
 literal meaning
+ @usage
+ 
+[l, r]:oppart(expr, predicate)
 */
 oppart(expr, predf):=block(
 	[sop, lst, lsttrue:[], lstfalse:[], ltrue, lfalse, err ],
@@ -72,7 +90,7 @@ oppart(expr, predf):=block(
 );
 
 /* 
-splits an expression by occurencess of an operator
+splits an expression by occurences of an operator
 */
 explodeop(expr, sop):=block([lst, w],
 	if mapatom(expr) then return ([expr]), 
@@ -135,6 +153,49 @@ factorby(expr, z):=block([quot, res, ret, ee, u, n, sop, %qq, radsubstflag:true 
 	ret
 );
 
+/*
+counts occurences of a symbol in an expression
+*/
+countsymb(ab, sym):=block([inflag:true ],
+	if freeof(sym, ab) then return(0),
+	if atom(ab) then  
+		if sym=ab then return(1),
+	if subvarp(ab) then  
+		if sym=op(ab) then return(1),
+	xreduce("+", maplist( lambda([i], countsymb(i, sym)), ab))
+ );
+ 
+/*
+returns a sorted list of the  occurences of a function in an expression
+*/
+
+fnsort(expr, fn, [dir]):=block( [la, u, v],
+	if inop(expr)=fn then return ([expr]),
+	la:sublist (args(expand(expr)), lambda([u], not freeof(fn, u))),
+	if emptyp(dir) then dir:'plus,
+	if dir='plus then
+		sort(la, lambda([u, v],  argsgreatp(u, v, fn)))
+	else
+		sort(la, lambda([u, v],  argslessp(u, v, fn)))
+);
+
+argsgreatp(uu, vv, fn):=block([l1,r1,l2,r2, kk], 
+	[l1,r1]:oppart(uu, lambda([kk], not freeof(fn, kk))), 
+	[l2,r2]:oppart(vv, lambda([kk], not freeof(fn, kk))), 
+	ordergreatp(l1, l2)
+);
+
+argslessp(uu, vv, fn):=block([l1,r1,l2,r2, kk], 
+	[l1,r1]:oppart(uu, lambda([kk], not freeof(fn, kk))), 
+	[l2,r2]:oppart(vv, lambda([kk], not freeof(fn, kk))), 
+	orderlessp(l1, l2)
+);
+
+/* partition by variable */
+partbyvar(expr, var):= block([u],
+	oppart(expr,  lambda([u], freeof(var, u)))
+);
+
 put('operpart, 'v2,'version);
 put('operpart, "Dimiter Prodanov", 'author);
-put('operpart, "(C) - Dimiter Prodanov, 2015 - 2017", 'copyright);
+put('operpart, "(C) - Dimiter Prodanov, 2015 - 2018", 'copyright);
