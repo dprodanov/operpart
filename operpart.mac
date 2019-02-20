@@ -84,7 +84,8 @@ oppart(expr, predf):=block(
 		 	if _debug=true then display( ltrue, lfalse), 
 			lst:[ ltrue, lfalse]
 		),
-		if emptyp(err) then ['nil, 'nil ]
+		if _debug=true then display(err),  
+		if emptyp(err) then lst:['nil, 'nil ]
 	),
 	lst
 );
@@ -195,6 +196,9 @@ argslessp(uu, vv, fn):=block([l1,r1,l2,r2, kk],
 partbyvar(expr, var):= block([u],
 	oppart(expr,  lambda([u], freeof(var, u)))
 );
+
+declare(resimplify, evfun);
+resimplify(ex):=expand(ex,0,0);
 
 put('operpart, 'v2,'version);
 put('operpart, "Dimiter Prodanov", 'author);
