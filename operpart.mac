@@ -43,7 +43,21 @@
 		
 */
 
+/*
+* \brief error-safe version of op. 
+* \param [in] expr expression
+* \return operator or nil
+*/
 inop(expr):= if not mapatom (expr)  then inpart(expr, 0) else 'nil;
+
+/**
+ *  \brief error-safe version of args 
+ *  
+ *  \param [in] expr expression
+ *  \return list of arguments or nil
+ *  
+ *  \details More details
+ */
 inargs(expr):= if not mapatom (expr)  then  substinpart( "[", expr, 0) else 'nil;
 
 /*
@@ -198,7 +212,7 @@ partbyvar(expr, var):= block([u],
 );
 
 declare(resimplify, evfun);
-resimplify(ex):=expand(ex,0,0);
+resimplify(ex):=expand(ex, 0, 0);
 
 put('operpart, 'v2,'version);
 put('operpart, "Dimiter Prodanov", 'author);
