@@ -25,7 +25,7 @@
    
    argslessp(uu, vv, fn)
 
-(C) - Dimiter Prodanov, 2015 - 2019
+(C) - Dimiter Prodanov, 2015 - 2018
  
 @license This library is free software; you can redistribute it and/or
         modify it under the terms of the GNU Lesser General Public
@@ -89,11 +89,15 @@ oppart(expr, predf):=block(
 		err:errcatch (
 			ltrue:if not emptyp(lsttrue) then 
 				/*substinpart(sop, lsttrue, 0) */
-				implodeop(lsttrue, sop)
+				if sop#"[" then
+					implodeop(lsttrue, sop)
+				else lsttrue
 				else 'nil,
 			lfalse:if not emptyp(lstfalse) then 
 				/*substinpart(sop, lstfalse, 0) */
-				implodeop(lstfalse, sop)
+				if sop#"[" then
+					implodeop(lstfalse, sop)
+				else lstfalse
 				else 'nil,
 		 	if _debug=true then display( ltrue, lfalse), 
 			lst:[ ltrue, lfalse]
@@ -212,7 +216,7 @@ partbyvar(expr, var):= block([u],
 );
 
 declare(resimplify, evfun);
-resimplify(ex):=expand(ex, 0, 0);
+resimplify(ex):=expand(ex,0,0);
 
 put('operpart, 'v2,'version);
 put('operpart, "Dimiter Prodanov", 'author);
