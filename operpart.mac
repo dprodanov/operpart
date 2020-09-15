@@ -7,6 +7,10 @@
    
    partbyvar(expr, var)
    
+   partbyop(expr, var)
+   
+   partbyconst(expr, var)
+   
    explodeop(expr, sop)
    
    implodeop(lsta, sop)
@@ -25,7 +29,7 @@
    
    argslessp(uu, vv, fn)
 
-(C) - Dimiter Prodanov, 2015 - 2018
+(C) - Dimiter Prodanov, 2015 - 2020
  
 @license This library is free software; you can redistribute it and/or
         modify it under the terms of the GNU Lesser General Public
@@ -173,7 +177,8 @@ factorby(expr, z):=block([quot, res, ret, ee, u, n, sop, %qq, radsubstflag:true 
 );
 
 /*
-counts occurences of a symbol in an expression
+counts occurences of a symbol in an expression.
+we assume that subscripted symbols are the same
 */
 countsymb(ab, sym):=block([inflag:true ],
 	if freeof(sym, ab) then return(0),
@@ -185,7 +190,7 @@ countsymb(ab, sym):=block([inflag:true ],
  );
  
 /*
-returns a sorted list of the  occurences of a function in an expression
+returns a sorted list of the occurences of a function in an expression
 */
 
 fnsort(expr, fn, [dir]):=block( [la, u, v],
@@ -215,9 +220,26 @@ partbyvar(expr, var):= block([u],
 	oppart(expr,  lambda([u], freeof(var, u)))
 );
 
+/* partition by operator */
+partbyop(expr, vop):= block([u ],
+	if inop(expr)=vop then return ([nil, expr]),
+	oppart(expr,  lambda([u], freeof(vop, u)))
+);
+
+/* partition by constant */
+partbyconst(expr, var):= block([u],
+	oppart(expr, lambda([u], constantp(u)))
+);
+
 declare(resimplify, evfun);
 resimplify(ex):=expand(ex,0,0);
 
-put('operpart, 'v2,'version);
+declare(ssum, evfun);
+ssum(x):= if listp(x) then substinpart("+",x,0) else x;
+
+declare(pprod, evfun);
+pprod(x):=if listp(x) then substinpart("*",x,0) else x;
+
+put('operpart, 'v22,'version);
 put('operpart, "Dimiter Prodanov", 'author);
-put('operpart, "(C) - Dimiter Prodanov, 2015 - 2018", 'copyright);
+put('operpart, "(C) - Dimiter Prodanov, 2015 - 2020", 'copyright);
